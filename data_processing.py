@@ -164,41 +164,41 @@ def create_generators(batch_size=128):
 # param[in] file_paths 	list of paths from which csv-files and image data shall be loaded
 # return    numpy arrays of images and steering angles
 ###################################################################
-def read_data(file_paths):
+def read_data(file_path, column_index=0, angle_offset=0.0):
 	print()
 	print('###################### read_data #####################')
 	images = []
 	angles = []
-	for file_path in file_paths:
-		# read csv file
-		print('Processing file path', file_path, ':')
-		lines = []
-		csv_file_name = file_path + '/driving_log.csv'
-		print('   Opening', csv_file_name, '...')
-		with open(csv_file_name) as csvfile:
-			print('   ... Done')
-			reader = csv.reader(csvfile)
-			line_count = 0
-			print('   Reading', csv_file_name, '...')
-			for line in reader:
-				line_count += 1
-				lines.append(line)
-			print('   ... Done (', line_count, 'lines )')
-		# read image files
-		is_header = True
-		print('   Reading image data...')
-		for line in lines:
-			if is_header:
-				is_header = False
-			else:
-				source_path = line[0]
-				file_name = source_path.split('/')[-1]
-				img_file_name = file_path + '/IMG/' + file_name
-				image = cv2.imread(img_file_name)
-				images.append(image)
-				angle = float(line[3])
-				angles.append(angle)
+	# read csv file
+	print('Processing file path', file_path, ', column', column_index, ':')
+	lines = []
+	csv_file_name = file_path + '/driving_log.csv'
+	print('   Opening', csv_file_name, '...')
+	with open(csv_file_name) as csvfile:
 		print('   ... Done')
+		reader = csv.reader(csvfile)
+		line_count = 0
+		print('   Reading', csv_file_name, '...')
+		for line in reader:
+			line_count += 1
+			lines.append(line)
+		print('   ... Done (', line_count, 'lines )')
+	# read image files
+	is_header = True
+	print('   Reading image data...')
+	for line in lines:
+		if is_header:
+			is_header = False
+		else:
+			source_path = line[column_index]
+			file_name = source_path.split('/')[-1]
+			img_file_name = file_path + '/IMG/' + file_name
+			image = cv2.imread(img_file_name)
+			image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+			images.append(image)
+			angle = float(line[3]) + angle_offset
+			angles.append(angle)
+	print('   ... Done')
 	print('######################################################')
 	print()
 	return np.array(images), np.array(angles)
