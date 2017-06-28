@@ -17,9 +17,6 @@ if do_preprocess_data:
 	file_paths = []
 	file_paths.append('./data')
 	file_paths.append('./data_curves')
-	# file_paths.append('./data_curves+correction')
-	# file_paths.append('./data_f+r_round')
-	# file_paths.append('./data_f+r_round2')
 	x_data = None
 	y_data = None
 	chunk_index = 0
